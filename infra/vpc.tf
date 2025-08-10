@@ -5,7 +5,7 @@ module "vpc" {
   name = "eks-vpc"
   cidr = "10.0.0.0/16"
 
-  azs             = ["${var.region}-a", "${var.region}-b", "${var.region}-c"]
+  azs             = ["${var.region}a", "${var.region}b", "${var.region}c"]
   public_subnets  = ["10.0.0.0/20", "10.0.16.0/20", "10.0.32.0/20"]
   private_subnets = ["10.0.128.0/20", "10.0.144.0/20", "10.0.160.0/20"]
 
