@@ -10,6 +10,8 @@ module "eks-cluster" {
   name               = local.cluster_name
   kubernetes_version = local.kubernetes_version
 
+  endpoint_private_access = true
+
   # EKS Addons
   addons = {
     coredns = {}
@@ -36,9 +38,9 @@ module "eks-cluster" {
       # This value is ignored after the initial creation
       # https://github.com/bryantbiggs/eks-desired-size-hack
       desired_size = 2
-      # Uses my current public ip data source to add it as allowed public access
-      cluster_endpoint_public_access       = true
-      cluster_endpoint_public_access_cidrs = ["${data.external.myip.result.ip}/32"]
     }
   }
+  # Temporary config: Uses my current public ip data source to add it as allowed public access
+  endpoint_public_access       = true
+  endpoint_public_access_cidrs = ["${data.external.myip.result.ip}/32"]
 }
