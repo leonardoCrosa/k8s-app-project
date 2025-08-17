@@ -44,12 +44,17 @@ resource "helm_release" "aws_load_balancer_controller" {
   chart            = "aws-load-balancer-controller"
   namespace        = "kube-system"
   create_namespace = false
+  timeout          = 600
+  atomic           = true
 
   version = var.helm-lbc-package-version
 
-  ## Creates a Service Account for LBC controller in my EKS cluster
+  # Configure values for helm package
+  # Creates a Service Account for LBC controller in my EKS cluster
   values = [yamlencode({
     clusterName = module.eks-cluster.cluster_name
+    region      = var.region
+    vpcId       = module.vpc.vpc_id
     serviceAccount = {
       create = true
       name   = "aws-load-balancer-controller"
@@ -65,14 +70,3 @@ resource "helm_release" "aws_load_balancer_controller" {
     aws_eks_access_policy_association.admins_admin # Terraform user needs to exist for helm to work
   ]
 }
-
-
-
-
-
-
-
-
-
-
-
