@@ -45,7 +45,7 @@ resource "helm_release" "aws_load_balancer_controller" {
   namespace        = "kube-system"
   create_namespace = false
 
-  version = "1.13.4"
+  version = var.helm-lbc-package-version
 
   ## Creates a Service Account for LBC controller in my EKS cluster
   values = [yamlencode({
