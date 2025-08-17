@@ -59,7 +59,11 @@ resource "helm_release" "aws_load_balancer_controller" {
     }
   })]
 
-  depends_on = [aws_iam_role_policy_attachment.lbc_attach]
+  depends_on = [
+    aws_iam_role_policy_attachment.lbc_attach,     # IAM Role and Policy need to be attached before creating SA account
+    module.eks-cluster,                            # Cluster needs to be ready for helm to access it
+    aws_eks_access_policy_association.admins_admin # Terraform user needs to exist for helm to work
+  ]
 }
 
 
