@@ -3,10 +3,6 @@ provider "aws" {
   region  = var.region
   profile = "lcrosa"
 }
-variable "region" {
-  type    = string
-  default = "us-east-1"
-}
 
 # Configure the k8s Provider for the eks cluster using the token gathered from the datasource
 #provider "kubernetes" {
@@ -26,5 +22,5 @@ provider "helm" {
 }
 
 provider "github" {
-  owner = leonardocrosa
+  owner = "leonardocrosa"
 }

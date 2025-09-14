@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "gha_trust" {
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = "repo:leonardoCrosa/k8s-app-project:ref:refs/heads/master"
+      values   = ["repo:leonardoCrosa/k8s-app-project:ref:refs/heads/*"]
     }
   }
 }

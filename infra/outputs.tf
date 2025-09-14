@@ -13,3 +13,8 @@ output "ecr_repository_url" {
   description = "ECR REPO URL"
   value       = aws_ecr_repository.custom-app.repository_url
 }
+
+output "configure_kubectl" {
+  description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
+  value       = "aws eks --region ${var.region} update-kubeconfig --name ${module.eks-cluster.cluster_name} --profile lcrosa"
+}

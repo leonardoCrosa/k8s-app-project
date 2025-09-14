@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_OWNER="${repo_owner}"
+REPO_NAME="${repo_name}"
+LABELS="${runner_labels}"
+RUNNER_NAME="${runner_name}"
+REGION="${region}"
+
+RUNNER_DIR="/opt/actions-runner"
+SSM_PARAM="/gha/github-pat"
+
+dnf update -y
+dnf install -y jq tar
+
+# ensure SSM agent is running
+systemctl enable --now amazon-ssm-agent || true
+
+# Create runner user
+id runner &>/dev/null || useradd --create-home --shell /bin/bash runner
+
+# Set up working dir
+mkdir -p "$RUNNER_DIR"
+chown runner:runner "$RUNNER_DIR"
+cd "$RUNNER_DIR"
+
+# Get a short-lived registration token using a GitHub PAT stored in SSM Parameter Store
+GH_PAT=$(aws ssm get-parameter \
+  --name "$SSM_PARAM" \
+  --with-decryption \
+  --region "$REGION" \
+  --query "Parameter.Value" \
+  --output text || true)
+
+if [ -z "$GH_PAT" ]; then
+  echo "ERROR: SSM Parameter $SSM_PARAM not found or no value. Create it and reboot this instance."
+  exit 1
+fi
+
+# Fetch the short lived token using the GH PAT
+REG_TOKEN=$(curl -s -X POST \
+  -H "Authorization: Bearer $GH_PAT" \
+  -H "Accept: application/vnd.github+json" \
+  "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/actions/runners/registration-token" | jq -r .token)
+
+if [ -z "$REG_TOKEN" ] || [ "$REG_TOKEN" = "null" ]; then
+  echo "ERROR: Could not obtain registration token from GitHub. Check PAT scopes and repo access."
+  exit 1
+fi
+
+# Download latest runner (sed removes the "v" from the curled version)
+RUNNER_VERSION=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r .tag_name | sed 's/^v//')
+curl -fsSL -o actions-runner-linux-x64-$RUNNER_VERSION.tar.gz \
+  https://github.com/actions/runner/releases/download/v$RUNNER_VERSION/actions-runner-linux-x64-$RUNNER_VERSION.tar.gz
+tar xzf actions-runner-linux-x64-$RUNNER_VERSION.tar.gz
+chown -R runner:runner "$RUNNER_DIR"
+
+# Configure the runner
+sudo -u runner $RUNNER_DIR/config.sh \
+  --unattended \
+  --url https://github.com/$REPO_OWNER/$REPO_NAME \
+  --token "$REG_TOKEN" \
+  --name "$RUNNER_NAME" \
+  --labels "$LABELS" \
+  --replace
+
+# Install as a service
+$RUNNER_DIR/svc.sh install runner
+systemctl enable actions.runner.*.service
+systemctl start actions.runner.*.service
+
+# Remove from memory
+unset GH_PAT REG_TOKEN

@@ -1,3 +1,8 @@
+# AWS Region
+variable "region" {
+  type    = string
+  default = "us-east-1"
+}
 # This variable is used in the eks-access.tf file to define access to the eks cluster
 variable "eks-admins" {
   description = "IAM role/user ARNs that should have cluster-admin"
@@ -9,3 +14,7 @@ variable "helm-lbc-package-version" {
   default     = "1.13.4"
   type        = string
 }
+
+## Github Actions Variables
+
+# Runner
