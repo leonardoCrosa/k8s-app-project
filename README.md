@@ -1,55 +1,54 @@
-# EKS CI/CD Project
+# EKS CI/CD Project (In progress)
 
 This project is a demonstration of a CI/CD pipeline for a simple web application deployed to an Amazon EKS cluster. The infrastructure is provisioned using Terraform, and the CI/CD pipeline is managed by GitHub Actions.
 
 ## Project Purpose
 
-The main goal of this project is to showcase a complete end-to-end CI/CD workflow for a containerized application on Kubernetes. It's designed as a learning resource and a portfolio piece for DevOps engineers who want to demonstrate their skills in:
+The main goal of this project is to showcase a complete end-to-end CI/CD workflow for a containerized application on Kubernetes. It's designed as a learning resource and a portfolio piece to demonstrate skills in:
 
--   **Infrastructure as Code (IaC):** Using Terraform to provision and manage all the necessary AWS resources.
--   **Kubernetes:** Deploying and managing applications on an EKS cluster.
--   **CI/CD:** Automating the build, test, and deployment process with GitHub Actions.
--   **Containerization:** Using Docker to package the application.
--   **Helm:** Using Helm to package and deploy the application on Kubernetes.
+- **Infrastructure as Code (IaC):** Using Terraform to provision and manage all the necessary AWS resources.
+- **Kubernetes:** Deploying and managing applications on an EKS cluster.
+- **CI/CD:** Automating the build, test, and deployment process with GitHub Actions.
+- **Containerization:** Using Docker to package the application.
+- **Helm:** Using Helm to package and deploy the application on Kubernetes.
 
 ## Architecture
 
 The project has the following architecture:
 
--   **AWS:** The cloud provider used for all the infrastructure.
--   **Terraform:** Used to provision the following AWS resources:
-    -   VPC, subnets, and other networking components.
-    -   EKS cluster.
-    -   ECR registry to store the Docker images.
-    -   IAM roles and policies for the EKS cluster and GitHub Actions.
-    -   A self-hosted GitHub Actions runner on an EC2 instance.
--   **GitHub Actions:** The CI/CD platform used to automate the following steps:
-    -   Build the Docker image.
-    -   Push the Docker image to ECR.
-    -   Deploy the application to the EKS cluster using Helm.
--   **Docker:** Used to containerize the simple web application.
--   **Helm:** Used to package and deploy the web application to the EKS cluster.
--   **Simple Web Application:** A basic HTML application served by Nginx.
+- **AWS:** The cloud provider used for all the infrastructure.
+- **Terraform:** Used to provision the following AWS resources:
+  - VPC, subnets, and other networking components.
+  - EKS cluster.
+  - IAM roles and policies for the AWS Load Balancer Controller and GitHub Actions.
+  - A self-hosted GitHub Actions runner on an EC2 instance.
+- **GitHub Actions:** The CI/CD platform used to automate the following steps:
+  - Build the Docker image.
+  - Push the Docker image to DockerHub.
+  - Deploy the application to the EKS cluster using Helm.
+- **Docker:** Used to containerize the simple web application.
+- **Helm:** Used to package and deploy the web application to the EKS cluster.
+- **Simple Web Application:** A basic HTML application served by Nginx.
 
 ## Project Structure
 
 The project is organized into the following directories:
 
--   `app`: Contains the source code for the simple web application, including the `Dockerfile`.
--   `deployments`: Contains the Helm chart for deploying the application.
--   `infra`: Contains all the Terraform code for provisioning the AWS infrastructure.
--   `scripts`: Contains helper scripts for deployment and for bootstrapping the GitHub Actions runner.
--   `.github/workflows`: Contains the GitHub Actions workflow file.
+- `app`: Contains the source code for the simple web application, including the `Dockerfile`.
+- `deployments`: Contains the Helm chart for deploying the application.
+- `infra`: Contains all the Terraform code for provisioning the AWS infrastructure.
+- `scripts`: Contains helper scripts for deployment and for bootstrapping the GitHub Actions runner.
+- `.github/workflows`: Contains the GitHub Actions workflow file.
 
 ## How to Use
 
 To use this project, you will need to have the following prerequisites:
 
--   An AWS account.
--   Terraform installed.
--   kubectl installed.
--   Helm installed.
--   A GitHub account and a personal access token with the `repo` scope.
+- An AWS account.
+- Terraform installed.
+- kubectl installed.
+- Helm installed.
+- A GitHub account and a personal access token with the `repo` scope.
 
 ### 1. Clone the repository
 
