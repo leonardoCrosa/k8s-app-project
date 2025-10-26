@@ -35,6 +35,11 @@ resource "aws_iam_role_policy_attachment" "lbc_attach" {
   policy_arn = aws_iam_policy.lbc.arn
 }
 
+# Sleep before installing LBC helm package, allows EKS to be ready
+resource "time_sleep" "eks-wait" {
+  depends_on      = [module.eks-cluster]
+  create_duration = "180s"
+}
 
 ## Helm install for AWS Load Balancer Ingress Controller Helm Package
 
@@ -65,8 +70,9 @@ resource "helm_release" "aws_load_balancer_controller" {
   })]
 
   depends_on = [
-    aws_iam_role_policy_attachment.lbc_attach,     # IAM Role and Policy need to be attached before creating SA account
-    module.eks-cluster,                            # Cluster needs to be ready for helm to access it
-    aws_eks_access_policy_association.admins_admin # Terraform user needs to exist for helm to work
+    aws_iam_role_policy_attachment.lbc_attach,      # IAM Role and Policy need to be attached before creating SA account
+    module.eks-cluster,                             # Cluster needs to be ready for helm to access it
+    aws_eks_access_policy_association.admins_admin, # Terraform user needs to exist for helm to work
+    time_sleep.eks-wait                             # 180s sleep after eks module creation
   ]
 }

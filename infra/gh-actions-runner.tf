@@ -62,7 +62,7 @@ resource "aws_iam_instance_profile" "runner" {
   role = aws_iam_role.runner.name
 }
 
-# Get latest AMI from public parameter
+# Get latest AMI from its public parameter
 data "aws_ssm_parameter" "al2023_std" {
   name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64"
 }
